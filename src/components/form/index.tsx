@@ -23,7 +23,6 @@ export const Form: FC = () => {
     total: "",
   });
   const [sliderValue, setSliderValue] = useState(0);
-  // const [lastEdited, setLastEdited] = useState<FieldName | null>(null);
 
   // ============ Computed Values ============
   const price = parseNumber(formState.price);
