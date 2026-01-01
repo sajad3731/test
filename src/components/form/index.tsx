@@ -1,17 +1,10 @@
 import { useState } from "react";
 import { Tab } from "./components/tab";
-import { useForm, SubmitHandler } from "react-hook-form"
 
 export const Form = () => {
   const [selectedTab, setSelectedTab] = useState("buy");
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm()
-  const onSubmit = (data) => console.log(data)
+ 
 
   return (
     <div className="w-96 m-auto my-10 border rounded-lg p-3 flex flex-col gap-4">
