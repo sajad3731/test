@@ -85,7 +85,7 @@ const NumericInput: FC<NumericInputProps> = ({
         <input
           type="text"
           inputMode="decimal"
-          className={`w-full border rounded-lg p-3 pr-16 text-left ${
+          className={`w-full border rounded-lg p-3 pl-16 text-right ${
             error ? "border-red-500" : "border-gray-300"
           }`}
           value={value}
