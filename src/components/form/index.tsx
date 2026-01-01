@@ -23,7 +23,7 @@ export const Form: FC = () => {
     total: "",
   });
   const [sliderValue, setSliderValue] = useState(0);
-  const [lastEdited, setLastEdited] = useState<FieldName | null>(null);
+  // const [lastEdited, setLastEdited] = useState<FieldName | null>(null);
 
   // ============ Computed Values ============
   const price = parseNumber(formState.price);
@@ -106,7 +106,7 @@ export const Form: FC = () => {
 
       return newState;
     });
-    setLastEdited(field);
+    // setLastEdited(field);
 
     // Update slider based on new values
     setTimeout(() => updateSliderFromValues(), 0);

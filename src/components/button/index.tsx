@@ -11,6 +11,9 @@ interface SentimentSelectorProps {
   onSelect?: (sentiment: SentimentType) => void;
 }
 
+const baseButtonStyles =
+  "relative border duration-200 flex items-center justify-center gap-1 py-4 cursor-pointer";
+
 export const Button: FC<SentimentSelectorProps> = ({
   likePercentage = 70,
   dislikePercentage = 30,
@@ -37,9 +40,6 @@ export const Button: FC<SentimentSelectorProps> = ({
     () => (selected ? `${dislikePercentage}%` : "50%"),
     [selected, dislikePercentage]
   );
-
-  const baseButtonStyles =
-    "relative border duration-200 flex items-center justify-center gap-1 py-4 cursor-pointer";
 
   return (
     <div className="w-72 flex items-center justify-center">
