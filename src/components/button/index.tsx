@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type FC } from "react";
 import { twMerge } from "tailwind-merge";
 import { LikeSvg } from "../../assets/like";
 import { DisLikeSvg } from "../../assets/dislike";
@@ -6,8 +6,8 @@ import { DisLikeSvg } from "../../assets/dislike";
 const likePercentage = 70;
 const dislikePercentage = 30;
 
-export const Button = () => {
-  const [isSelected, setIsSelected] = useState(null);
+export const Button:FC = () => {
+  const [isSelected, setIsSelected] = useState<"like" | "dislike" | null>(null);
 
   return (
     <div className="flex items-center justify-center w-screen h-75">

@@ -1,4 +1,5 @@
 @import "tailwindcss";
 
-:root {
+:root html body{
+  direction: rtl;
 }
