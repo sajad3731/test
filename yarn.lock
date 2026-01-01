@@ -1047,7 +1047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.2.5":
+"@types/react@npm:^19.2.7":
   version: 19.2.7
   resolution: "@types/react@npm:19.2.7"
   dependencies:
@@ -2385,7 +2385,7 @@ __metadata:
     "@eslint/js": "npm:^9.39.1"
     "@tailwindcss/vite": "npm:^4.1.18"
     "@types/node": "npm:^24.10.1"
-    "@types/react": "npm:^19.2.5"
+    "@types/react": "npm:^19.2.7"
     "@types/react-dom": "npm:^19.2.3"
     "@vitejs/plugin-react": "npm:^5.1.1"
     eslint: "npm:^9.39.1"
