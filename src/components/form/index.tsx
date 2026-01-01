@@ -1,14 +1,10 @@
-import {
-  useState,
-  useCallback,
-  useMemo,
-  type FC,
-  type ChangeEvent,
-} from "react";
-import { Tab } from "./components/tab";
+import { useState, useCallback, useMemo, type FC } from "react";
+import { Tab } from "../tab";
 import { MOCK_ASSETS, LIMITS, DECIMALS, FEE_PERCENTAGE } from "../../../data";
+import { NumericInput } from "../input";
+import { PercentageSlider } from "../slider";
+import { formatNumber, parseNumber } from "./utils";
 
-// ============ Types ============
 type OrderType = "buy" | "sell";
 
 interface FormState {
@@ -19,126 +15,6 @@ interface FormState {
 
 type FieldName = keyof FormState;
 
-// ============ Utility Functions ============
-const formatNumber = (value: number, decimals: number): string => {
-  if (isNaN(value) || value === 0) return "";
-  return value.toFixed(decimals);
-};
-
-const parseNumber = (value: string): number => {
-  const num = parseFloat(value);
-  return isNaN(num) ? 0 : num;
-};
-
-const validateDecimalInput = (value: string, maxDecimals: number): boolean => {
-  if (value === "") return true;
-
-  // Check for negative
-  if (value.includes("-")) return false;
-
-  // Allow only numbers and single decimal point
-  if (!/^\d*\.?\d*$/.test(value)) return false;
-
-  // Check decimal places
-  const parts = value.split(".");
-  if (parts.length === 2 && parts[1].length > maxDecimals) return false;
-
-  return true;
-};
-
-// const clamp = (value: number, min: number, max: number): number => {
-//   return Math.min(Math.max(value, min), max);
-// };
-
-// ============ Custom Input Component ============
-interface NumericInputProps {
-  label: string;
-  value: string;
-  unit: string;
-  onChange: (value: string) => void;
-  error?: string;
-  decimals: number;
-}
-
-const NumericInput: FC<NumericInputProps> = ({
-  label,
-  value,
-  unit,
-  onChange,
-  error,
-  decimals,
-}) => {
-  const handleChange = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.target.value;
-      if (validateDecimalInput(newValue, decimals)) {
-        onChange(newValue);
-      }
-    },
-    [onChange, decimals]
-  );
-
-  return (
-    <div className="flex flex-col gap-1">
-      <label className="text-sm text-gray-600">{label}</label>
-      <div className="relative">
-        <input
-          type="text"
-          inputMode="decimal"
-          className={`w-full border rounded-lg p-3 pl-16 text-right ${
-            error ? "border-red-500" : "border-gray-300"
-          }`}
-          value={value}
-          onChange={handleChange}
-          dir="rtl"
-        />
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
-          {unit}
-        </span>
-      </div>
-      {error && <span className="text-red-500 text-xs">{error}</span>}
-    </div>
-  );
-};
-
-// ============ Slider Component ============
-interface SliderProps {
-  value: number;
-  onChange: (value: number) => void;
-}
-
-const PercentageSlider: FC<SliderProps> = ({ value, onChange }) => {
-  const marks = [0, 25, 50, 75, 100];
-
-  return (
-    <div className="flex flex-col gap-2">
-      <input
-        type="range"
-        min={0}
-        max={100}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-blue-500 cursor-pointer"
-      />
-      <div className="flex justify-between text-xs text-gray-500">
-        {marks.map((mark) => (
-          <button
-            key={mark}
-            type="button"
-            onClick={() => onChange(mark)}
-            className={`px-2 py-1 rounded ${
-              value === mark ? "bg-blue-100 text-blue-600" : "hover:bg-gray-100"
-            }`}
-          >
-            {mark}%
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-// ============ Main Form Component ============
 export const Form: FC = () => {
   const [orderType, setOrderType] = useState<OrderType>("buy");
   const [formState, setFormState] = useState<FormState>({
