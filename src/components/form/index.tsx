@@ -90,7 +90,7 @@ const NumericInput: FC<NumericInputProps> = ({
           }`}
           value={value}
           onChange={handleChange}
-          dir="ltr"
+          dir="rtl"
         />
         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
           {unit}
