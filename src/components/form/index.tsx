@@ -6,25 +6,7 @@ import {
   type ChangeEvent,
 } from "react";
 import { Tab } from "./components/tab";
-
-// ============ Constants ============
-const MOCK_ASSETS = {
-  USDT: 100,
-  BTC: 1,
-} as const;
-
-const LIMITS = {
-  price: { min: 87510.22, max: 88373.72 },
-  amount: { min: 0.000001, max: 10 },
-} as const;
-
-const DECIMALS = {
-  USDT: 2,
-  BTC: 6,
-  price: 2,
-} as const;
-
-const FEE_PERCENTAGE = 0.015; // 1.5%
+import { MOCK_ASSETS, LIMITS, DECIMALS, FEE_PERCENTAGE } from "../../../data";
 
 // ============ Types ============
 type OrderType = "buy" | "sell";
@@ -64,9 +46,9 @@ const validateDecimalInput = (value: string, maxDecimals: number): boolean => {
   return true;
 };
 
-const clamp = (value: number, min: number, max: number): number => {
-  return Math.min(Math.max(value, min), max);
-};
+// const clamp = (value: number, min: number, max: number): number => {
+//   return Math.min(Math.max(value, min), max);
+// };
 
 // ============ Custom Input Component ============
 interface NumericInputProps {
