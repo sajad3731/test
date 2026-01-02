@@ -1,13 +1,13 @@
-import type { FC } from "react";
+import { memo, type FC } from "react";
 
 interface SliderProps {
   value: number;
   onChange: (value: number) => void;
 }
 
-export const PercentageSlider: FC<SliderProps> = ({ value, onChange }) => {
-  const marks = [0, 25, 50, 75, 100];
+const marks = [0, 25, 50, 75, 100];
 
+export const PercentageSlider: FC<SliderProps> = memo(({ value, onChange }) => {
   return (
     <div className="flex flex-col gap-2">
       <input
@@ -34,4 +34,6 @@ export const PercentageSlider: FC<SliderProps> = ({ value, onChange }) => {
       </div>
     </div>
   );
-};
+});
+
+PercentageSlider.displayName = "PercentageSlider";
