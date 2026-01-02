@@ -48,7 +48,10 @@ export const Form: FC = () => {
         dir="rtl"
       >
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <Tab selectedTab={orderType} setSelectedTab={handleOrderTypeChange} />
+          <Tab
+            selectedTab={orderType || "buy"}
+            setSelectedTab={handleOrderTypeChange}
+          />
 
           {/* Balance Display */}
           <div className="flex justify-between text-sm text-gray-600 bg-gray-50 p-2 rounded">
