@@ -50,13 +50,24 @@ export const useOrderForm = () => {
       : Math.max(0, total - fee);
   }, [orderType, amount, total, fee]);
 
-  const isValid = useMemo(() => {
-    const hasNoErrors = Object.keys(errors).length === 0;
-    return hasNoErrors && price > 0 && amount > 0 && total > 0;
-  }, [errors, price, amount, total]);
-
+  // Get balance error from errors object
   const balanceError = (errors as Record<string, { message?: string }>).balance
     ?.message;
+
+  // isValid should check for balance error too
+  const isValid = useMemo(() => {
+    const hasFieldErrors =
+      !!errors.price || !!errors.amount || !!errors.total || !!balanceError;
+    return !hasFieldErrors && price > 0 && amount > 0 && total > 0;
+  }, [
+    errors.price,
+    errors.amount,
+    errors.total,
+    balanceError,
+    price,
+    amount,
+    total,
+  ]);
 
   // Helper to calculate and set slider value
   const updateSliderFromValues = useCallback(

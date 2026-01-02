@@ -7,12 +7,13 @@ test.describe("Limit Order Form", () => {
 
   test.describe("Tab Switching", () => {
     test("should display buy tab as default", async ({ page }) => {
-      const buyTab = page.getByRole("button", { name: "خرید" });
+      // Use exact match to avoid matching submit button
+      const buyTab = page.getByRole("button", { name: "خرید", exact: true });
       await expect(buyTab).toHaveClass(/bg-green-500/);
     });
 
     test("should switch to sell tab", async ({ page }) => {
-      const sellTab = page.getByRole("button", { name: "فروش" });
+      const sellTab = page.getByRole("button", { name: "فروش", exact: true });
       await sellTab.click();
       await expect(sellTab).toHaveClass(/bg-red-500/);
     });
@@ -22,7 +23,7 @@ test.describe("Limit Order Form", () => {
       await expect(page.getByText("100 USDT")).toBeVisible();
 
       // Switch to sell
-      await page.getByRole("button", { name: "فروش" }).click();
+      await page.getByRole("button", { name: "فروش", exact: true }).click();
       await expect(page.getByText("1 BTC")).toBeVisible();
     });
   });
@@ -30,13 +31,14 @@ test.describe("Limit Order Form", () => {
   test.describe("Input Validation", () => {
     test("should only accept numeric input", async ({ page }) => {
       const priceInput = page.locator('input[name="price"]');
-      await priceInput.fill("abc123");
+      // Type character by character to trigger onChange validation
+      await priceInput.pressSequentially("abc123");
       await expect(priceInput).toHaveValue("123");
     });
 
     test("should reject negative numbers", async ({ page }) => {
       const priceInput = page.locator('input[name="price"]');
-      await priceInput.fill("-100");
+      await priceInput.pressSequentially("-100");
       await expect(priceInput).toHaveValue("100");
     });
 
@@ -44,7 +46,8 @@ test.describe("Limit Order Form", () => {
       page,
     }) => {
       const priceInput = page.locator('input[name="price"]');
-      await priceInput.fill("87600.123");
+      await priceInput.pressSequentially("87600.123");
+      // Input should stop at 2 decimals
       await expect(priceInput).toHaveValue("87600.12");
     });
 
@@ -52,7 +55,8 @@ test.describe("Limit Order Form", () => {
       page,
     }) => {
       const amountInput = page.locator('input[name="amount"]');
-      await amountInput.fill("0.1234567");
+      await amountInput.pressSequentially("0.1234567");
+      // Input should stop at 6 decimals
       await expect(amountInput).toHaveValue("0.123456");
     });
 
@@ -120,7 +124,7 @@ test.describe("Limit Order Form", () => {
     test("should update amount on slider change in sell mode", async ({
       page,
     }) => {
-      await page.getByRole("button", { name: "فروش" }).click();
+      await page.getByRole("button", { name: "فروش", exact: true }).click();
       await page.locator('input[name="price"]').fill("88000");
 
       // Click 50% button
@@ -155,7 +159,7 @@ test.describe("Limit Order Form", () => {
     test("should calculate 1.5% fee correctly in sell mode", async ({
       page,
     }) => {
-      await page.getByRole("button", { name: "فروش" }).click();
+      await page.getByRole("button", { name: "فروش", exact: true }).click();
       await page.locator('input[name="price"]').fill("88000");
       await page.locator('input[name="amount"]').fill("0.1");
 
@@ -176,7 +180,7 @@ test.describe("Limit Order Form", () => {
     test("should show correct receive amount in sell mode", async ({
       page,
     }) => {
-      await page.getByRole("button", { name: "فروش" }).click();
+      await page.getByRole("button", { name: "فروش", exact: true }).click();
       await page.locator('input[name="price"]').fill("88000");
       await page.locator('input[name="amount"]').fill("0.1");
 
@@ -198,7 +202,7 @@ test.describe("Limit Order Form", () => {
     test("should show insufficient balance error in sell mode", async ({
       page,
     }) => {
-      await page.getByRole("button", { name: "فروش" }).click();
+      await page.getByRole("button", { name: "فروش", exact: true }).click();
       await page.locator('input[name="price"]').fill("88000");
       await page.locator('input[name="amount"]').fill("1.5"); // More than 1 BTC
 
@@ -238,7 +242,7 @@ test.describe("Limit Order Form", () => {
     });
 
     test("should show sell button in sell mode", async ({ page }) => {
-      await page.getByRole("button", { name: "فروش" }).click();
+      await page.getByRole("button", { name: "فروش", exact: true }).click();
 
       const submitBtn = page.getByRole("button", { name: "ثبت سفارش فروش" });
       await expect(submitBtn).toBeVisible();
@@ -252,7 +256,7 @@ test.describe("Limit Order Form", () => {
       await page.locator('input[name="price"]').fill("88000");
       await page.locator('input[name="amount"]').fill("0.1");
 
-      await page.getByRole("button", { name: "فروش" }).click();
+      await page.getByRole("button", { name: "فروش", exact: true }).click();
 
       await expect(page.locator('input[name="amount"]')).toHaveValue("");
       await expect(page.locator('input[name="total"]')).toHaveValue("");
@@ -262,14 +266,14 @@ test.describe("Limit Order Form", () => {
       await page.locator('input[name="price"]').fill("88000");
       await page.locator('input[name="amount"]').fill("0.1");
 
-      await page.getByRole("button", { name: "فروش" }).click();
+      await page.getByRole("button", { name: "فروش", exact: true }).click();
 
       await expect(page.locator('input[name="price"]')).toHaveValue("88000");
     });
 
     test("should reset slider when switching tabs", async ({ page }) => {
       await page.getByRole("button", { name: "50%" }).click();
-      await page.getByRole("button", { name: "فروش" }).click();
+      await page.getByRole("button", { name: "فروش", exact: true }).click();
 
       const slider = page.locator('input[type="range"]');
       await expect(slider).toHaveValue("0");
