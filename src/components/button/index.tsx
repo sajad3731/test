@@ -86,7 +86,7 @@ export const Button: FC<SentimentSelectorProps> = ({
           selected ? "bg-red-100" : "bg-red-500",
           selected === "dislike" && [
             "border-red-500",
-            "before:absolute before:top-0 before:-right-1",
+            "before:absolute before:-top-2 before:right-0",
             "before:h-[115%] before:w-px before:bg-red-500",
             "before:origin-bottom-left before:-rotate-27",
           ]

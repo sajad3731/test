@@ -4,9 +4,11 @@ import { Form } from "./components/form";
 
 export const App: FC = () => {
   return (
-    <div className="">
-      <Button />
-      <hr />
+    <div className="flex flex-col gap-10 items-center">
+      <div className="my-10">
+        <Button />
+      </div>
+      <hr className="min-w-full" />
       <Form />
     </div>
   );
