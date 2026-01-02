@@ -1,4 +1,5 @@
 import { memo, useCallback, type ChangeEvent, type FC } from "react";
+import { twMerge } from "tailwind-merge";
 
 const validateDecimalInput = (value: string, maxDecimals: number): boolean => {
   if (value === "") return true;
@@ -44,9 +45,10 @@ export const NumericInput: FC<NumericInputProps> = memo(
             name={name}
             type="text"
             inputMode="decimal"
-            className={`w-full border rounded-lg p-3 pl-16 text-right ${
-              error ? "border-red-500" : "border-gray-300"
-            }`}
+            className={twMerge([
+              "w-full border rounded-lg p-3 pl-16 text-right",
+              error ? "border-red-500" : "border-gray-300",
+            ])}
             value={value}
             onChange={handleChange}
             dir="rtl"

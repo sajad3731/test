@@ -1,7 +1,8 @@
+import type { FC } from "react";
 import { Button } from "./components/button";
 import { Form } from "./components/form";
 
-export const App: React.FC = () => {
+export const App: FC = () => {
   return (
     <div className="">
       <Button />
