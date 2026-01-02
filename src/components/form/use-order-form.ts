@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { orderFormSchema, type OrderFormData } from "./schema";
@@ -9,7 +9,6 @@ type OrderType = "buy" | "sell";
 
 export const useOrderForm = () => {
   const [sliderValue, setSliderValue] = useState(0);
-  const [lastEditedField, setLastEditedField] = useState<"price" | "amount" | "total" | null>(null);
 
   const form = useForm<OrderFormData>({
     resolver: zodResolver(orderFormSchema),
@@ -22,7 +21,12 @@ export const useOrderForm = () => {
     },
   });
 
-  const { control, setValue, getValues, formState: { errors } } = form;
+  const {
+    control,
+    setValue,
+    getValues,
+    formState: { errors },
+  } = form;
 
   const orderType = useWatch({ control, name: "orderType" });
   const priceStr = useWatch({ control, name: "price" });
@@ -51,41 +55,54 @@ export const useOrderForm = () => {
     return hasNoErrors && price > 0 && amount > 0 && total > 0;
   }, [errors, price, amount, total]);
 
-  const balanceError = (errors as Record<string, { message?: string }>).balance?.message;
+  const balanceError = (errors as Record<string, { message?: string }>).balance
+    ?.message;
+
+  // Helper to calculate and set slider value
+  const updateSliderFromValues = useCallback(
+    (type: OrderType, newTotal: number, newAmount: number) => {
+      if (type === "buy" && newTotal > 0) {
+        setSliderValue(Math.min(100, (newTotal / MOCK_ASSETS.USDT) * 100));
+      } else if (type === "sell" && newAmount > 0) {
+        setSliderValue(Math.min(100, (newAmount / MOCK_ASSETS.BTC) * 100));
+      }
+    },
+    []
+  );
 
   // Update field with dependent calculations
   const updateField = useCallback(
     (field: "price" | "amount" | "total", value: string) => {
       setValue(field, value, { shouldValidate: true });
-      setLastEditedField(field);
 
       const p = field === "price" ? parseNumber(value) : price;
       const a = field === "amount" ? parseNumber(value) : amount;
       const t = field === "total" ? parseNumber(value) : total;
 
+      let newTotal = t;
+      let newAmount = a;
+
       if (field === "price" || field === "amount") {
         if (p > 0 && a > 0) {
-          setValue("total", formatNumber(p * a, DECIMALS.USDT), { shouldValidate: true });
+          newTotal = p * a;
+          setValue("total", formatNumber(newTotal, DECIMALS.USDT), {
+            shouldValidate: true,
+          });
         }
       } else if (field === "total") {
         if (p > 0 && t > 0) {
-          setValue("amount", formatNumber(t / p, DECIMALS.BTC), { shouldValidate: true });
+          newAmount = t / p;
+          setValue("amount", formatNumber(newAmount, DECIMALS.BTC), {
+            shouldValidate: true,
+          });
         }
       }
+
+      // Update slider based on new values
+      updateSliderFromValues(orderType, newTotal, newAmount);
     },
-    [setValue, price, amount, total]
+    [setValue, price, amount, total, orderType, updateSliderFromValues]
   );
-
-  // Update slider from values
-  useEffect(() => {
-    if (lastEditedField === null) return;
-
-    if (orderType === "buy" && total > 0) {
-      setSliderValue(Math.min(100, (total / MOCK_ASSETS.USDT) * 100));
-    } else if (orderType === "sell" && amount > 0) {
-      setSliderValue(Math.min(100, (amount / MOCK_ASSETS.BTC) * 100));
-    }
-  }, [orderType, total, amount, lastEditedField]);
 
   // Handle slider change
   const handleSliderChange = useCallback(
@@ -95,15 +112,23 @@ export const useOrderForm = () => {
 
       if (orderType === "buy") {
         const newTotal = (percentage / 100) * MOCK_ASSETS.USDT;
-        setValue("total", formatNumber(newTotal, DECIMALS.USDT), { shouldValidate: true });
+        setValue("total", formatNumber(newTotal, DECIMALS.USDT), {
+          shouldValidate: true,
+        });
         if (p > 0) {
-          setValue("amount", formatNumber(newTotal / p, DECIMALS.BTC), { shouldValidate: true });
+          setValue("amount", formatNumber(newTotal / p, DECIMALS.BTC), {
+            shouldValidate: true,
+          });
         }
       } else {
         const newAmount = (percentage / 100) * MOCK_ASSETS.BTC;
-        setValue("amount", formatNumber(newAmount, DECIMALS.BTC), { shouldValidate: true });
+        setValue("amount", formatNumber(newAmount, DECIMALS.BTC), {
+          shouldValidate: true,
+        });
         if (p > 0) {
-          setValue("total", formatNumber(newAmount * p, DECIMALS.USDT), { shouldValidate: true });
+          setValue("total", formatNumber(newAmount * p, DECIMALS.USDT), {
+            shouldValidate: true,
+          });
         }
       }
     },
@@ -119,7 +144,6 @@ export const useOrderForm = () => {
       setValue("total", "");
       setValue("price", currentPrice);
       setSliderValue(0);
-      setLastEditedField(null);
     },
     [setValue, getValues]
   );
