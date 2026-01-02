@@ -25,6 +25,7 @@ export const useOrderForm = () => {
     control,
     setValue,
     getValues,
+    trigger,
     formState: { errors },
   } = form;
 
@@ -50,24 +51,25 @@ export const useOrderForm = () => {
       : Math.max(0, total - fee);
   }, [orderType, amount, total, fee]);
 
-  // Get balance error from errors object
-  const balanceError = (errors as Record<string, { message?: string }>).balance
-    ?.message;
+  // Check for balance error in the relevant field
+  const balanceError = useMemo(() => {
+    const totalError = errors.total?.message;
+    const amountError = errors.amount?.message;
 
-  // isValid should check for balance error too
+    if (orderType === "buy" && totalError?.includes("موجودی ناکافی")) {
+      return totalError;
+    }
+    if (orderType === "sell" && amountError?.includes("موجودی ناکافی")) {
+      return amountError;
+    }
+    return undefined;
+  }, [errors.total, errors.amount, orderType]);
+
+  // isValid should check for all errors
   const isValid = useMemo(() => {
-    const hasFieldErrors =
-      !!errors.price || !!errors.amount || !!errors.total || !!balanceError;
+    const hasFieldErrors = !!errors.price || !!errors.amount || !!errors.total;
     return !hasFieldErrors && price > 0 && amount > 0 && total > 0;
-  }, [
-    errors.price,
-    errors.amount,
-    errors.total,
-    balanceError,
-    price,
-    amount,
-    total,
-  ]);
+  }, [errors.price, errors.amount, errors.total, price, amount, total]);
 
   // Helper to calculate and set slider value
   const updateSliderFromValues = useCallback(
@@ -109,10 +111,13 @@ export const useOrderForm = () => {
         }
       }
 
+      // Trigger validation to ensure balance checks run
+      trigger();
+
       // Update slider based on new values
       updateSliderFromValues(orderType, newTotal, newAmount);
     },
-    [setValue, price, amount, total, orderType, updateSliderFromValues]
+    [setValue, price, amount, total, orderType, updateSliderFromValues, trigger]
   );
 
   // Handle slider change
@@ -142,8 +147,9 @@ export const useOrderForm = () => {
           });
         }
       }
+      trigger();
     },
-    [orderType, price, setValue]
+    [orderType, price, setValue, trigger]
   );
 
   // Handle order type change

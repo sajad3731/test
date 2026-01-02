@@ -50,19 +50,19 @@ export const orderFormSchema = z
       }
     }
 
-    // Balance validation
+    // Balance validation - add to the relevant field path
     if (orderType === "buy" && total > MOCK_ASSETS.USDT) {
       ctx.addIssue({
         code: "custom",
         message: `موجودی ناکافی (${MOCK_ASSETS.USDT} USDT)`,
-        path: ["balance"],
+        path: ["total"],
       });
     }
     if (orderType === "sell" && amount > MOCK_ASSETS.BTC) {
       ctx.addIssue({
         code: "custom",
         message: `موجودی ناکافی (${MOCK_ASSETS.BTC} BTC)`,
-        path: ["balance"],
+        path: ["amount"],
       });
     }
   });
