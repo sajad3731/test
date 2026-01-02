@@ -41,6 +41,15 @@ export const Form: FC = () => {
     alert(`سفارش ${orderType === "buy" ? "خرید" : "فروش"} ثبت شد!`);
   };
 
+  // Filter out balance errors from field errors (they're shown separately)
+  const priceError = errors.price?.message;
+  const amountError = errors.amount?.message?.includes("موجودی ناکافی")
+    ? undefined
+    : errors.amount?.message;
+  const totalError = errors.total?.message?.includes("موجودی ناکافی")
+    ? undefined
+    : errors.total?.message;
+
   return (
     <FormProvider {...form}>
       <div
@@ -70,7 +79,7 @@ export const Form: FC = () => {
             value={watch("price")}
             unit="USDT"
             onChange={(v) => updateField("price", v)}
-            error={errors.price?.message}
+            error={priceError}
             decimals={DECIMALS.price}
           />
 
@@ -80,7 +89,7 @@ export const Form: FC = () => {
             value={watch("amount")}
             unit="BTC"
             onChange={(v) => updateField("amount", v)}
-            error={errors.amount?.message}
+            error={amountError}
             decimals={DECIMALS.BTC}
           />
 
@@ -90,7 +99,7 @@ export const Form: FC = () => {
             value={watch("total")}
             unit="USDT"
             onChange={(v) => updateField("total", v)}
-            error={errors.total?.message}
+            error={totalError}
             decimals={DECIMALS.USDT}
           />
 
